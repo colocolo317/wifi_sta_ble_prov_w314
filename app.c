@@ -206,10 +206,15 @@ void application(void *argument)
     LOG_PRINT("Failed to create GSPI thread\n");
   }
 #endif
+
 #if USER_TEST_GSPI
+  LOG_PRINT("[pre] Tick Freq: (%lu hz)\r\n",osKernelGetTickFreq());
+  LOG_PRINT("[pre] Sys Timer Freq: (%lu hz)\r\n",osKernelGetSysTimerFreq());
   gspi_example_init();
   osSemaphoreRelease(gspi_thread_sem);
 #endif
+  LOG_PRINT("Tick Freq: (%lu hz)\r\n",osKernelGetTickFreq());
+  LOG_PRINT("Sys Timer Freq: (%lu hz)\r\n",osKernelGetSysTimerFreq());
   // BLE initialization
   rsi_ble_configurator_init();
 
