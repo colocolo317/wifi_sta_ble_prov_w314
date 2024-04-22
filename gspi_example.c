@@ -19,11 +19,12 @@
 #include "sl_si91x_gspi_common_config.h"
 #include "gspi_example.h"
 #include "rsi_debug.h"
+#include <rsi_common_apis.h>
 
 /*******************************************************************************
  ***************************  Defines / Macros  ********************************
  ******************************************************************************/
-#define GSPI_BUFFER_SIZE             20480      // Size of buffer
+#define GSPI_BUFFER_SIZE             4096      // Size of buffer
 #define GSPI_INTF_PLL_CLK            180000000 // Intf pll clock frequency
 #define GSPI_INTF_PLL_REF_CLK        40000000  // Intf pll reference clock frequency
 #define GSPI_SOC_PLL_CLK             20000000  // Soc pll clock frequency
@@ -76,12 +77,12 @@ void gspi_master_task(void *argument)
   while(1){
     if(gspi_init)
     {
-      //DEBUGOUT("current SSI state: %d\r\n", ssi_master_current_mode);
+      //LOG_PRINT("current SSI state: %d\r\n", ssi_master_current_mode);
       gspi_example_process_action();
     }
     else
     {
-      DEBUGOUT("Wait in else\r\n");
+      LOG_PRINT("GSPI not be initialed, Wait for SEM release\r\n");
       osSemaphoreAcquire(gspi_thread_sem, osWaitForever); // wait ssi init done
     }
   }
@@ -110,58 +111,58 @@ void gspi_example_init(void)
   do {
     // Version information of GSPI driver
     version = sl_si91x_gspi_get_version();
-    DEBUGOUT("GSPI version is fetched successfully \n");
-    DEBUGOUT("API version is %d.%d.%d\n", version.release, version.major, version.minor);
-#if USER_TEST_GSPI && !(USER_TEST_SSI)
+    LOG_PRINT("GSPI version is fetched successfully \n");
+    LOG_PRINT("API version is %d.%d.%d\n", version.release, version.major, version.minor);
+#if 1// USER_TEST_GSPI && !(USER_TEST_SSI)
     // Filling up the structure with the default clock parameters
     status = init_clock_configuration_structure(&clock_config);
     if (status != SL_STATUS_OK) {
-      DEBUGOUT("init_clock_configuration_structure: Error Code : %lu \n", status);
+      LOG_PRINT("init_clock_configuration_structure: Error Code : %lu \n", status);
       break;
     }
     // Configuration of clock with the default clock parameters
     status = sl_si91x_gspi_configure_clock(&clock_config);
     if (status != SL_STATUS_OK) {
-      DEBUGOUT("sl_si91x_gspi_clock_configuration: Error Code : %lu \n", status);
+      LOG_PRINT("sl_si91x_gspi_clock_configuration: Error Code : %lu \n", status);
       break;
     }
-    DEBUGOUT("Clock configuration is successful \n");
+    LOG_PRINT("Clock configuration is successful \n");
 #endif
     // Pass the address of void pointer, it will be updated with the address
     // of GSPI instance which can be used in other APIs.
     status = sl_si91x_gspi_init(SL_GSPI_MASTER, &gspi_driver_handle);
     if (status != SL_STATUS_OK) {
-      DEBUGOUT("sl_si91x_gspi_init: Error Code : %lu \n", status);
+      LOG_PRINT("sl_si91x_gspi_init: Error Code : %lu \n", status);
       break;
     }
-    DEBUGOUT("GSPI initialization is successful \n");
+    LOG_PRINT("GSPI initialization is successful \n");
     // Fetching the status of GSPI i.e., busy, data lost and mode fault
     gspi_status = sl_si91x_gspi_get_status(gspi_driver_handle);
-    DEBUGOUT("GSPI status is fetched successfully \n");
-    DEBUGOUT("Busy: %d\n", gspi_status.busy);
-    DEBUGOUT("Data_Lost: %d\n", gspi_status.data_lost);
-    DEBUGOUT("Mode_Fault: %d\n", gspi_status.mode_fault);
+    LOG_PRINT("GSPI status is fetched successfully \n");
+    LOG_PRINT("Busy: %d\n", gspi_status.busy);
+    LOG_PRINT("Data_Lost: %d\n", gspi_status.data_lost);
+    LOG_PRINT("Mode_Fault: %d\n", gspi_status.mode_fault);
     //Configuration of all other parameters that are required by GSPI
     // gspi_configuration structure is from sl_si91x_gspi_init.h file.
     // The user can modify this structure with the configuration of
     // his choice by filling this structure.
     status = sl_si91x_gspi_set_configuration(gspi_driver_handle, &config);
     if (status != SL_STATUS_OK) {
-      DEBUGOUT("sl_si91x_gspi_control: Error Code : %lu \n", status);
+      LOG_PRINT("sl_si91x_gspi_control: Error Code : %lu \n", status);
       break;
     }
-    DEBUGOUT("GSPI configuration is successful \n");
+    LOG_PRINT("GSPI configuration is successful \n");
     // Register user callback function
     status = sl_si91x_gspi_register_event_callback(gspi_driver_handle, callback_event);
     if (status != SL_STATUS_OK) {
-      DEBUGOUT("sl_si91x_gspi_register_event_callback: Error Code : %lu \n", status);
+      LOG_PRINT("sl_si91x_gspi_register_event_callback: Error Code : %lu \n", status);
       break;
     }
-    DEBUGOUT("GSPI user event callback registered successfully \n");
+    LOG_PRINT("GSPI user event callback registered successfully \n");
     // Fetching and printing the current clock division factor
-    DEBUGOUT("Current Clock division factor is %lu \n", sl_si91x_gspi_get_clock_division_factor(gspi_driver_handle));
+    LOG_PRINT("Current Clock division factor is %lu \n", sl_si91x_gspi_get_clock_division_factor(gspi_driver_handle));
     // Fetching and printing the current frame length
-    DEBUGOUT("Current Frame Length is %lu \n", sl_si91x_gspi_get_frame_length());
+    LOG_PRINT("Current Frame Length is %lu \n", sl_si91x_gspi_get_frame_length());
     if (sl_si91x_gspi_get_frame_length() > GSPI_BIT_WIDTH) {
       gspi_division_factor = sizeof(gspi_data_out[0]);
     }
@@ -205,16 +206,16 @@ void gspi_example_process_action(void)
                                              sizeof(gspi_data_out) / gspi_division_factor);
         if (status != SL_STATUS_OK) {
           // If it fails to execute the API, it will not execute rest of the things
-          DEBUGOUT("sl_si91x_gspi_transfer_data: Error Code : %lu \n", status);
+          LOG_PRINT("sl_si91x_gspi_transfer_data: Error Code : %lu \n", status);
           current_mode = SL_GSPI_TRANSMISSION_COMPLETED;
           break;
         }
-        DEBUGOUT("GSPI transfer begin successfully \n");
+        LOG_PRINT("GSPI transfer begin successfully \n");
         begin_transmission = false;
       }
       if (transfer_complete) {
         transfer_complete = false;
-        DEBUGOUT("GSPI transfer completed successfully \n");
+        LOG_PRINT("GSPI transfer completed successfully \n");
         // After comparing the loopback transfer, it compares the gspi_data_out and
         // gspi_data_in.
         compare_loop_back_data();
@@ -241,11 +242,11 @@ void gspi_example_process_action(void)
         status = sl_si91x_gspi_receive_data(gspi_driver_handle, gspi_data_in, sizeof(gspi_data_in));
         if (status != SL_STATUS_OK) {
           // If it fails to execute the API, it will not execute rest of the things
-          DEBUGOUT("sl_si91x_gspi_receive_data: Error Code : %lu \n", status);
+          LOG_PRINT("sl_si91x_gspi_receive_data: Error Code : %lu \n", status);
           current_mode = SL_GSPI_TRANSMISSION_COMPLETED;
           break;
         }
-        DEBUGOUT("GSPI receive begin successfully \n");
+        LOG_PRINT("GSPI receive begin successfully \n");
         begin_transmission = false;
         //Waiting till the receive is completed
       }
@@ -257,10 +258,10 @@ void gspi_example_process_action(void)
           // If send macro is enabled, current mode is set to send
           current_mode       = SL_GSPI_SEND_DATA;
           begin_transmission = true;
-          DEBUGOUT("GSPI receive completed \n");
+          LOG_PRINT("GSPI receive completed \n");
           break;
         }
-        DEBUGOUT("GSPI receive completed \n");
+        LOG_PRINT("GSPI receive completed \n");
         // If send macro is not enabled, current mode is set to completed.
         current_mode = SL_GSPI_TRANSMISSION_COMPLETED;
       }
@@ -276,7 +277,7 @@ void gspi_example_process_action(void)
         begin_transmission = true;
       }
 #endif // SL_GSPI_DMA_CONFIG_ENABLE
-      DEBUGOUT("GSPI receive completed \n");
+      LOG_PRINT("GSPI receive completed \n");
       break;
     case SL_GSPI_SEND_DATA:
       if (begin_transmission) {
@@ -286,11 +287,11 @@ void gspi_example_process_action(void)
           sl_si91x_gspi_send_data(gspi_driver_handle, gspi_data_out, sizeof(gspi_data_out) / gspi_division_factor);
         if (status != SL_STATUS_OK) {
           // If it fails to execute the API, it will not execute rest of the things
-          DEBUGOUT("sl_si91x_gspi_send_data: Error Code : %lu \n", status);
+          LOG_PRINT("sl_si91x_gspi_send_data: Error Code : %lu \n", status);
           current_mode = SL_GSPI_TRANSMISSION_COMPLETED;
           break;
         }
-        DEBUGOUT("GSPI send begin successfully \n");
+        LOG_PRINT("GSPI send begin successfully \n");
         begin_transmission = false;
       }
       //Waiting till the send is completed
@@ -311,12 +312,12 @@ void gspi_example_process_action(void)
       // At last current mode is set to completed.
       current_mode = SL_GSPI_TRANSMISSION_COMPLETED;
 #endif // SL_GSPI_DMA_CONFIG_ENABLE
-      DEBUGOUT("GSPI send completed \n");
+      LOG_PRINT("GSPI send completed \n");
       break;
     case SL_GSPI_TRANSMISSION_COMPLETED:
       break;
   }
-  //DEBUGOUT("GSPI wait in the end of %s \r\n",(char*)__func__);
+  //LOG_PRINT("GSPI wait in the end of %s \r\n",(char*)__func__);
   //osSemaphoreAcquire(gspi_thread_sem, osWaitForever);
 }
 
@@ -375,9 +376,9 @@ static void compare_loop_back_data(void)
     }
   }
   if (data_index == GSPI_BUFFER_SIZE) {
-    DEBUGOUT("GSPI Data comparison successful, Loop Back Test Passed \n");
+    LOG_PRINT("GSPI Data comparison successful, Loop Back Test Passed \n");
   } else {
-    DEBUGOUT("GSPI Data comparison failed, Loop Back Test failed \n");
+    LOG_PRINT("GSPI Data comparison failed, Loop Back Test failed \n");
   }
 }
 
@@ -391,13 +392,13 @@ static void callback_event(uint32_t event)
   switch (event) {
     case SL_GSPI_TRANSFER_COMPLETE:
       transfer_complete = true;
-      DEBUGOUT("transfer_complete\r\n");
+      LOG_PRINT("transfer_complete\r\n");
       break;
     case SL_GSPI_DATA_LOST:
       break;
     case SL_GSPI_MODE_FAULT:
       break;
   }
-  DEBUGOUT("Release in %s\r\n", __func__);
+  LOG_PRINT("Release in %s\r\n", __func__);
   osSemaphoreRelease(gspi_thread_sem);
 }

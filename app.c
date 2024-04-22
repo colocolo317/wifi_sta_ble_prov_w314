@@ -45,7 +45,9 @@
 #include "rsi_ble_common_config.h"
 
 #include <rsi_common_apis.h>
-
+#if USER_TEST_GSPI
+#include "gspi_example.h"
+#endif
 // APP version
 #define APP_FW_VERSION "0.4"
 
@@ -57,6 +59,7 @@ uint8_t magic_word;
 
 osSemaphoreId_t wlan_thread_sem;
 osSemaphoreId_t ble_thread_sem;
+osSemaphoreId_t gspi_thread_sem;
 
 static const sl_wifi_device_configuration_t
   config = { .boot_option = LOAD_NWP_FW,
@@ -138,6 +141,19 @@ const osThreadAttr_t ble_thread_attributes = {
   .tz_module  = 0,
   .reserved   = 0,
 };
+#if USER_TEST_GSPI
+const osThreadAttr_t gspi_thread_attributes = {
+  .name       = "gspi_thread",
+  .attr_bits  = 0,
+  .cb_mem     = 0,
+  .cb_size    = 0,
+  .stack_mem  = 0,
+  .stack_size = 10240,
+  .priority   = osPriorityNormal,
+  .tz_module  = 0,
+  .reserved   = 0,
+};
+#endif
 
 void application(void *argument)
 {
@@ -173,11 +189,27 @@ void application(void *argument)
     LOG_PRINT("Failed to create ble_thread_sem\n");
     return;
   }
+#if USER_TEST_GSPI
+  gspi_thread_sem = osSemaphoreNew(1, 0, NULL);
+  if (gspi_thread_sem == NULL) {
+    LOG_PRINT("Failed to create ble_thread_sem\n");
+    return;
+  }
+#endif
 
   if (osThreadNew((osThreadFunc_t)rsi_ble_configurator_task, NULL, &ble_thread_attributes) == NULL) {
     LOG_PRINT("Failed to create BLE thread\n");
   }
 
+#if USER_TEST_GSPI
+  if (osThreadNew((osThreadFunc_t)gspi_master_task, NULL, &gspi_thread_attributes) == NULL) {
+    LOG_PRINT("Failed to create GSPI thread\n");
+  }
+#endif
+#if USER_TEST_GSPI
+  gspi_example_init();
+  osSemaphoreRelease(gspi_thread_sem);
+#endif
   // BLE initialization
   rsi_ble_configurator_init();
 
@@ -188,5 +220,6 @@ void application(void *argument)
 
 void app_init(void)
 {
+
   osThreadNew((osThreadFunc_t)application, NULL, &thread_attributes);
 }
