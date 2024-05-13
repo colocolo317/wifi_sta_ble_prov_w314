@@ -24,7 +24,7 @@
 /*******************************************************************************
  ***************************  Defines / Macros  ********************************
  ******************************************************************************/
-#define GSPI_BUFFER_SIZE             4096      // Size of buffer
+#define GSPI_BUFFER_SIZE             20480      // Size of buffer
 #define GSPI_INTF_PLL_CLK            180000000 // Intf pll clock frequency
 #define GSPI_INTF_PLL_REF_CLK        40000000  // Intf pll reference clock frequency
 #define GSPI_SOC_PLL_CLK             20000000  // Soc pll clock frequency
@@ -34,15 +34,15 @@
 #define GSPI_DVISION_FACTOR          0         // Division factor
 #define GSPI_SWAP_READ_DATA          1         // true to enable and false to disable swap read
 #define GSPI_SWAP_WRITE_DATA         0         // true to enable and false to disable swap write
-#define GSPI_BITRATE                 90000000  // Bitrate for setting the clock division factor
+#define GSPI_BITRATE                 40000000  // Bitrate for setting the clock division factor
 #define GSPI_BIT_WIDTH               8         // Default Bit width
 #define GSPI_MAX_BIT_WIDTH           16        // Maximum Bit width
 
 /*******************************************************************************
  *************************** LOCAL VARIABLES   *******************************
  ******************************************************************************/
-static uint16_t gspi_data_in[GSPI_BUFFER_SIZE];
-static uint16_t gspi_data_out[GSPI_BUFFER_SIZE];
+uint16_t gspi_data_in[GSPI_BUFFER_SIZE];
+uint16_t gspi_data_out[GSPI_BUFFER_SIZE];
 static uint16_t gspi_division_factor       = 1;
 static sl_gspi_handle_t gspi_driver_handle = NULL;
 
@@ -113,7 +113,7 @@ void gspi_example_init(void)
     version = sl_si91x_gspi_get_version();
     LOG_PRINT("GSPI version is fetched successfully \n");
     LOG_PRINT("API version is %d.%d.%d\n", version.release, version.major, version.minor);
-#if 1// USER_TEST_GSPI && !(USER_TEST_SSI)
+#if 0// USER_TEST_GSPI && !(USER_TEST_SSI)
     // Filling up the structure with the default clock parameters
     status = init_clock_configuration_structure(&clock_config);
     if (status != SL_STATUS_OK) {
@@ -200,10 +200,12 @@ void gspi_example_process_action(void)
       if (begin_transmission == true) {
         // Validation for executing the API only once
         sl_si91x_gspi_set_slave_number(GSPI_SLAVE_0);
+        while(1){
         status = sl_si91x_gspi_transfer_data(gspi_driver_handle,
                                              gspi_data_out,
                                              gspi_data_in,
                                              sizeof(gspi_data_out) / gspi_division_factor);
+        }
         if (status != SL_STATUS_OK) {
           // If it fails to execute the API, it will not execute rest of the things
           LOG_PRINT("sl_si91x_gspi_transfer_data: Error Code : %lu \n", status);
