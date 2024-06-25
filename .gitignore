@@ -1,0 +1,8 @@
+*.d
+*.o
+*.mk
+GNU ARM v12.2.1 - Default/*.rps
+GNU ARM v12.2.1 - Default/*.hex
+GNU ARM v12.2.1 - Default/*.out
+GNU ARM v12.2.1 - Default/*.s37
+GNU ARM v12.2.1 - Default/*.axf

@@ -16,11 +16,18 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder</name>
+			<triggers>full,incremental,</triggers>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 		<nature>com.silabs.ss.framework.ide.project.sls.core.SLSProjectNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
+		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
 	<linkedResources>
 		<link>
@@ -187,36 +194,6 @@
 			<name>gecko_sdk_4.4.1/platform/common/src/sli_cmsis_os2_ext_task_register.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/platform/common/src/sli_cmsis_os2_ext_task_register.c</locationURI>
-		</link>
-		<link>
-			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_additional_status.h</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_additional_status.h</locationURI>
-		</link>
-		<link>
-			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_cmsis_utility.h</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_cmsis_utility.h</locationURI>
-		</link>
-		<link>
-			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_constants.h</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_constants.h</locationURI>
-		</link>
-		<link>
-			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_ieee802_types.h</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_ieee802_types.h</locationURI>
-		</link>
-		<link>
-			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_ip_types.h</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_ip_types.h</locationURI>
-		</link>
-		<link>
-			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_utility.h</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_utility.h</locationURI>
 		</link>
 		<link>
 			<name>wiseconnect3_sdk_3.1.4/components/common/src/sl_utility.c</name>
