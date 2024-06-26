@@ -19,7 +19,7 @@ source:
 - {path: ble_app.c}
 - {path: wifi_app.c}
 include:
-- path: ''
+- path: .
   file_list:
   - {path: app.h}
   - {path: ble_config.h}
@@ -36,6 +36,7 @@ component:
 - {from: wiseconnect3_sdk, id: si917_memory_default_config}
 - {from: wiseconnect3_sdk, id: sl_si91x_basic_buffers}
 - {from: wiseconnect3_sdk, id: sl_si91x_internal_stack}
+- {from: wiseconnect3_sdk, id: sllib_m4_power_save}
 - {from: wiseconnect3_sdk, id: syscalls}
 - {from: wiseconnect3_sdk, id: wifi}
 - {from: wiseconnect3_sdk, id: wifi_resources}

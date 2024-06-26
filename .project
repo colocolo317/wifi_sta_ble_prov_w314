@@ -196,6 +196,36 @@
 			<locationURI>STUDIO_SDK_LOC/platform/common/src/sli_cmsis_os2_ext_task_register.c</locationURI>
 		</link>
 		<link>
+			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_additional_status.h</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_additional_status.h</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_cmsis_utility.h</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_cmsis_utility.h</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_constants.h</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_constants.h</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_ieee802_types.h</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_ieee802_types.h</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_ip_types.h</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_ip_types.h</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.1.4/components/common/inc/sl_utility.h</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/inc/sl_utility.h</locationURI>
+		</link>
+		<link>
 			<name>wiseconnect3_sdk_3.1.4/components/common/src/sl_utility.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/common/src/sl_utility.c</locationURI>
@@ -1374,6 +1404,11 @@
 			<name>wiseconnect3_sdk_3.1.4/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_usart.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/rsi_usart.c</locationURI>
+		</link>
+		<link>
+			<name>wiseconnect3_sdk_3.1.4/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/sl_si91x_m4_ps.c</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/extension/wiseconnect/components/device/silabs/si91x/mcu/drivers/peripheral_drivers/src/sl_si91x_m4_ps.c</locationURI>
 		</link>
 		<link>
 			<name>wiseconnect3_sdk_3.1.4/components/device/silabs/si91x/mcu/drivers/rom_driver/inc/rsi_packing.h</name>
