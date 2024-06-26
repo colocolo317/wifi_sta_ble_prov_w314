@@ -47,6 +47,9 @@
 #include "wifi_config.h"
 #include "rsi_common_apis.h"
 
+#include "sl_si91x_m4_ps.h"
+#include "ble_config.h"
+
 // WLAN include file for configuration
 
 extern osSemaphoreId_t wlan_thread_sem;
@@ -80,6 +83,7 @@ static uint32_t wlan_app_event_map;
  *                                               DATA TYPES
  *********************************************************************************************************
  */
+extern int32_t rsi_bt_power_save_profile(uint8_t psp_mode, uint8_t psp_type);
 
 extern void sl_wifi_app_send_to_ble(uint16_t msg_type, uint8_t *data, uint16_t data_len);
 static sl_status_t show_scan_results();
@@ -400,6 +404,25 @@ void sl_wifi_app_task()
         sl_wifi_app_clear_event(SL_WIFI_IPCONFIG_DONE_STATE);
 
         osSemaphoreRelease(wlan_thread_sem);
+
+        //! initiating power save in BLE mode
+        if (rsi_bt_power_save_profile(PSP_MODE, PSP_TYPE) != RSI_SUCCESS) {
+          LOG_PRINT("\r\n Failed to initiate power save in BLE mode \r\n");
+        }
+
+        sl_wifi_performance_profile_t performance_profile = { .profile         = ASSOCIATED_POWER_SAVE,
+            .listen_interval = 1000 };
+
+        status = sl_wifi_set_performance_profile(&performance_profile);
+        if (status != SL_STATUS_OK) {
+          LOG_PRINT("\r\nPower save configuration Failed, Error Code : 0x%lX\r\n", status);
+        }
+        LOG_PRINT("\r\nAssociated Power Save Enabled\r\n");
+
+        LOG_PRINT("Before M4 sleep\n");
+        sl_si91x_m4_sleep_wakeup();
+        LOG_PRINT("After M4 sleep\n");
+
         LOG_PRINT("SL_WIFI_IPCONFIG_DONE_STATE\n");
       } break;
 

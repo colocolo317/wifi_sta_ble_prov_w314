@@ -5,6 +5,7 @@
 #include "sli_siwx917_soc.h"
 #include "rsi_board.h"
 #include "rsi_debug.h"
+#include "rsi_wisemcu_hardware_setup.h"
 #include "cmsis_os2.h"
 
 void sl_platform_init(void)
@@ -14,6 +15,7 @@ void sl_platform_init(void)
   sli_si91x_platform_init();
   RSI_Board_Init();
   DEBUGINIT();
+  sl_si91x_hardware_setup();
   osKernelInitialize();
 }
 
