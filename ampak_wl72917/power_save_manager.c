@@ -12,6 +12,8 @@
 #include "rsi_ps_config.h"
 #include "sl_si91x_host_interface.h"
 #include "sl_wifi.h"
+#include "ble_config.h"
+#include "rsi_common_apis.h"
 
 #define SL_SI91X_MCU_ALARM_BASED_WAKEUP 0
 #define ALARM_PERIODIC_TIME 30 /*<! periodic alarm configuration in SEC */
@@ -23,21 +25,33 @@
 #define BROADCAST_IN_TIM                1
 #define BROADCAST_TIM_TILL_NEXT_COMMAND 1
 
+extern int32_t rsi_bt_power_save_profile(uint8_t psp_mode, uint8_t psp_type);
+
 void ampak_m4_sleep_wakeup(void)
 {
   sl_status_t status = SL_STATUS_OK;
 
+  //! initiating power save in BLE mode
+  if (rsi_bt_power_save_profile(PSP_MODE, PSP_TYPE) != RSI_SUCCESS)
+  {
+    LOG_PRINT("\r\n Failed to initiate power save in BLE mode \r\n");
+  }
+
   status = sl_wifi_filter_broadcast(BROADCAST_DROP_THRESHOLD, BROADCAST_IN_TIM, BROADCAST_TIM_TILL_NEXT_COMMAND);
   if (status != SL_STATUS_OK) {
-    printf("\r\nsl_wifi_filter_broadcast Failed, Error Code : 0x%lX\r\n", status);
+    LOG_PRINT("\r\nsl_wifi_filter_broadcast Failed, Error Code : 0x%lX\r\n", status);
     return;
   }
 
-  sl_wifi_performance_profile_t performance_profile = { .profile = ASSOCIATED_POWER_SAVE };
+  sl_wifi_performance_profile_t performance_profile =
+    {
+      .profile = ASSOCIATED_POWER_SAVE ,
+      .listen_interval = 1000
+    };
   // set performance profile
   status = sl_wifi_set_performance_profile(&performance_profile);
   if (status != SL_STATUS_OK) {
-    printf("\r\nPower save configuration Failed, Error Code : 0x%lX\r\n", status);
+    LOG_PRINT("\r\nPower save configuration Failed, Error Code : 0x%lX\r\n", status);
     return;
   }
 
@@ -84,7 +98,7 @@ void ampak_m4_sleep_wakeup(void)
   /* Configure RAM Usage and Retention Size */
   sl_si91x_configure_ram_retention(WISEMCU_192KB_RAM_IN_USE, WISEMCU_RETAIN_DEFAULT_RAM_DURING_SLEEP);
 
-  printf("\r\nM4 Sleep\r\n");
+  LOG_PRINT("\r\nM4 Sleep\r\n");
 
   /* Trigger M4 Sleep*/
   sl_si91x_trigger_sleep(SLEEP_WITH_RETENTION,
@@ -101,6 +115,6 @@ void ampak_m4_sleep_wakeup(void)
   sl_si91x_host_clear_sleep_indicator();
 
   //  /*Start of M4 init after wake up  */
-  printf("\r\nM4 Wake Up\r\n");
+  LOG_PRINT("\r\nM4 Wake Up\r\n");
 #endif
 }

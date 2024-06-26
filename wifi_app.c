@@ -46,9 +46,12 @@
 
 #include "wifi_config.h"
 #include "rsi_common_apis.h"
-
+#if AMPAK_USE_SILABS_BLE_PS
 #include "sl_si91x_m4_ps.h"
 #include "ble_config.h"
+#else
+#include "ampak_wl72917/ampak_util.h"
+#endif
 
 // WLAN include file for configuration
 
@@ -404,7 +407,7 @@ void sl_wifi_app_task()
         sl_wifi_app_clear_event(SL_WIFI_IPCONFIG_DONE_STATE);
 
         osSemaphoreRelease(wlan_thread_sem);
-
+#if AMPAK_USE_SILABS_BLE_PS
         //! initiating power save in BLE mode
         if (rsi_bt_power_save_profile(PSP_MODE, PSP_TYPE) != RSI_SUCCESS) {
           LOG_PRINT("\r\n Failed to initiate power save in BLE mode \r\n");
@@ -422,6 +425,9 @@ void sl_wifi_app_task()
         LOG_PRINT("Before M4 sleep\n");
         sl_si91x_m4_sleep_wakeup();
         LOG_PRINT("After M4 sleep\n");
+#else
+        ampak_m4_sleep_wakeup();
+#endif
 
         LOG_PRINT("SL_WIFI_IPCONFIG_DONE_STATE\n");
       } break;
