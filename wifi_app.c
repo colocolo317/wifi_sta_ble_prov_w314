@@ -407,6 +407,7 @@ void sl_wifi_app_task()
         sl_wifi_app_clear_event(SL_WIFI_IPCONFIG_DONE_STATE);
 
         osSemaphoreRelease(wlan_thread_sem);
+#if 0
 #if AMPAK_USE_SILABS_BLE_PS
         //! initiating power save in BLE mode
         if (rsi_bt_power_save_profile(PSP_MODE, PSP_TYPE) != RSI_SUCCESS) {
@@ -427,6 +428,7 @@ void sl_wifi_app_task()
         LOG_PRINT("After M4 sleep\n");
 #else
         ampak_m4_sleep_wakeup();
+#endif
 #endif
 
         LOG_PRINT("SL_WIFI_IPCONFIG_DONE_STATE\n");

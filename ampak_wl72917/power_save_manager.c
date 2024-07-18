@@ -98,7 +98,8 @@ void ampak_m4_sleep_wakeup(void)
   /* Configure RAM Usage and Retention Size */
   sl_si91x_configure_ram_retention(WISEMCU_192KB_RAM_IN_USE, WISEMCU_RETAIN_DEFAULT_RAM_DURING_SLEEP);
 
-  LOG_PRINT("\r\nM4 Sleep\r\n");
+  LOG_PRINT("Thread Number %lu\r\n",osThreadGetCount());
+  LOG_PRINT("===M4 Sleep===\r\n");
 
   /* Trigger M4 Sleep*/
   sl_si91x_trigger_sleep(SLEEP_WITH_RETENTION,
@@ -115,6 +116,20 @@ void ampak_m4_sleep_wakeup(void)
   sl_si91x_host_clear_sleep_indicator();
 
   //  /*Start of M4 init after wake up  */
-  LOG_PRINT("\r\nM4 Wake Up\r\n");
+  LOG_PRINT("===M4 Wake Up===\r\n");
+  LOG_PRINT("Thread Number %lu\r\n",osThreadGetCount());
+
+  performance_profile.profile = HIGH_PERFORMANCE;
+  performance_profile.listen_interval = 100;
+
+  // set performance profile
+  status = sl_wifi_set_performance_profile(&performance_profile);
+  if (status != SL_STATUS_OK) {
+    LOG_PRINT("\r\nPower save configuration Failed, Error Code : 0x%lX\r\n", status);
+    return;
+  }
+
+  LOG_PRINT("Set HIGH_PERFORMANCE okay\r\n");
+
 #endif
 }

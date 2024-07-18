@@ -49,6 +49,9 @@
 
 #include "ble_config.h"
 #include "wifi_config.h"
+#include "ampak_wl72917/ampak_util.h"
+
+#define AMPAK_USE_BLE_ADV_POWERSAVE 1
 
 // BLE attribute service types uuid values
 #define RSI_BLE_CHAR_SERV_UUID   0x2803
@@ -658,6 +661,10 @@ void rsi_ble_configurator_init(void)
   // set device in advertising mode.
   rsi_ble_start_advertising();
   LOG_PRINT("\r\nBLE Advertising Started...\r\n");
+
+#if AMPAK_USE_BLE_ADV_POWERSAVE
+  ampak_m4_sleep_wakeup();
+#endif
 }
 
 /*==============================================*/
